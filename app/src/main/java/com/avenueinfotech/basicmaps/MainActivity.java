@@ -42,8 +42,8 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -52,10 +52,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.IOException;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,  GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,
+        GoogleApiClient.ConnectionCallbacks,  GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    GoogleMap mGoogleMap;
-    GoogleApiClient mApiClient;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+
+    private GoogleMap mMap;
+    private GoogleApiClient mApiClient;
     private ProgressDialog dialog;
     private static GPSTracker gps;
     final int REQUEST_LOCATION = 199;
@@ -160,8 +163,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         {
             LocationRequest locationRequest = LocationRequest.create();
             locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            locationRequest.setInterval(1000);
-            locationRequest.setFastestInterval(5 * 1000);
+            locationRequest.setInterval(10000);
+            locationRequest.setFastestInterval(10 * 1000);
             LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                     .addLocationRequest(locationRequest);
 
@@ -208,7 +211,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void initMap() {
-        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment);
+//        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment);
+//        mapFragment.getMapAsync(this);
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
@@ -228,13 +234,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mGoogleMap = googleMap;
+    public void onMapReady(GoogleMap map) {
+        mMap = map;
 //        goToLocationZoom(39.25, -75.896, 15);
 
-        if (mGoogleMap != null) {
+        if (mMap != null) {
 
-            mGoogleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
                 @Override
                 public void onMarkerDragStart(Marker marker) {
 
@@ -266,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             });
 
-            mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                 @Override
                 public View getInfoWindow(Marker marker) {
                     return null;
@@ -299,7 +305,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                return;
            }
        }
-        mGoogleMap.setMyLocationEnabled(true);
+        mMap.setMyLocationEnabled(true);
 
 //        mGoogleApiClient = new GoogleApiClient.Builder(this)
 //                .addApi(LocationServices.API)
@@ -313,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void goToLocationZoom(double lat, double lng, float zoom) {
         LatLng ll = new LatLng(lat, lng);
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 16);
-        mGoogleMap.moveCamera(update);
+        mMap.moveCamera(update);
 
 
     }
@@ -327,19 +333,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.mapTypeNone:
-                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NONE);
+                mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
                 break;
             case R.id.mapTypeNormal:
-                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                 break;
             case R.id.mapTypeSatellite:
-                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
                 break;
             case R.id.mapTypeTerrain:
-                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
                 break;
             case R.id.mapTypeHybrid:
-                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
                 break;
 
             default:
@@ -381,7 +387,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else {
             LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
             CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 19);
-            mGoogleMap.animateCamera(update);
+            mMap.animateCamera(update);
         }
     }
 
@@ -422,7 +428,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .position(new LatLng(lat, lng))
                 .snippet("I am here");
 
-        marker = mGoogleMap.addMarker(options);
+        marker = mMap.addMarker(options);
     }
 
 
