@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,8 +44,8 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -52,14 +54,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.IOException;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks,  GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class MainActivity extends AppCompatActivity implements
+        OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMyLocationButtonClickListener {
 
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-
-    private GoogleMap mMap;
-    private GoogleApiClient mApiClient;
+    GoogleMap mGoogleMap;
+    GoogleApiClient mApiClient;
     private ProgressDialog dialog;
+    WifiManager wifiManager;
+    Switch wifiSwitch;
+    TextView wifiStatus;
     private static GPSTracker gps;
     final int REQUEST_LOCATION = 199;
     public final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
@@ -122,6 +126,39 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         dialog = new ProgressDialog(MainActivity.this);
         dialog.setCancelable(false);
 
+        wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+
+//        wifiSwitch = (Switch)findViewById(R.id.wifiswitch);
+        wifiStatus = (TextView)findViewById(R.id.wifistatus);
+
+        if (wifiManager.isWifiEnabled()){
+//            wifiSwitch.setChecked(true);
+            wifiStatus.setText("Wifi ON");
+        } else {
+//            wifiSwitch.setChecked(false);
+            wifiStatus.setText("Wifi OFF");
+        }
+//        wifiSwitch = (Switch)findViewById(R.id.wifiswitch);
+
+//        if (wifiManager.isWifiEnabled()){
+//            wifiSwitch.setChecked(true);
+//        } else {
+//            wifiSwitch.setChecked(false);
+//        }
+
+//        wifiSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked){
+//                    wifiManager.setWifiEnabled(true);
+//                    Toast.makeText(MainActivity.this, "Wifi may take a moment to turn ON", Toast.LENGTH_LONG).show();
+//                }else {
+//                    wifiManager.setWifiEnabled(false);
+//                    Toast.makeText(MainActivity.this, "Wifi is switched OFF", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
+
 
 
 //        mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -163,8 +200,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         {
             LocationRequest locationRequest = LocationRequest.create();
             locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            locationRequest.setInterval(10000);
-            locationRequest.setFastestInterval(10 * 1000);
+            locationRequest.setInterval(1000);
+            locationRequest.setFastestInterval(5 * 1000);
             LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                     .addLocationRequest(locationRequest);
 
@@ -211,10 +248,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void initMap() {
-//        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment);
-//        mapFragment.getMapAsync(this);
-        SupportMapFragment mapFragment =
-                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment);
         mapFragment.getMapAsync(this);
     }
 
@@ -234,13 +268,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     @Override
-    public void onMapReady(GoogleMap map) {
-        mMap = map;
+    public void onMapReady(GoogleMap googleMap) {
+        mGoogleMap = googleMap;
 //        goToLocationZoom(39.25, -75.896, 15);
 
-        if (mMap != null) {
+        if (mGoogleMap != null) {
 
-            mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            mGoogleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
                 @Override
                 public void onMarkerDragStart(Marker marker) {
 
@@ -272,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             });
 
-            mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                 @Override
                 public View getInfoWindow(Marker marker) {
                     return null;
@@ -300,12 +334,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             });
         }
 
+        mGoogleMap.setOnMyLocationButtonClickListener(this);
+
+
        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                return;
            }
        }
-        mMap.setMyLocationEnabled(true);
+        mGoogleMap.setMyLocationEnabled(true);
 
 //        mGoogleApiClient = new GoogleApiClient.Builder(this)
 //                .addApi(LocationServices.API)
@@ -318,8 +355,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void goToLocationZoom(double lat, double lng, float zoom) {
         LatLng ll = new LatLng(lat, lng);
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 16);
-        mMap.moveCamera(update);
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 18);
+        mGoogleMap.moveCamera(update);
 
 
     }
@@ -333,19 +370,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.mapTypeNone:
-                mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
+                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NONE);
                 break;
             case R.id.mapTypeNormal:
-                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                 break;
             case R.id.mapTypeSatellite:
-                mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
                 break;
             case R.id.mapTypeTerrain:
-                mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
                 break;
             case R.id.mapTypeHybrid:
-                mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
                 break;
 
             default:
@@ -387,7 +424,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else {
             LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
             CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 19);
-            mMap.animateCamera(update);
+            mGoogleMap.animateCamera(update);
         }
     }
 
@@ -428,10 +465,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .position(new LatLng(lat, lng))
                 .snippet("I am here");
 
-        marker = mMap.addMarker(options);
+        marker = mGoogleMap.addMarker(options);
     }
 
 
+    @Override
+    public boolean onMyLocationButtonClick() {
+        return false;
+    }
 }
 //
 //    @Override
