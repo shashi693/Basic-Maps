@@ -126,18 +126,18 @@ public class MainActivity extends AppCompatActivity implements
         dialog = new ProgressDialog(MainActivity.this);
         dialog.setCancelable(false);
 
-        wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+//        wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
 //        wifiSwitch = (Switch)findViewById(R.id.wifiswitch);
-        wifiStatus = (TextView)findViewById(R.id.wifistatus);
+//        wifiStatus = (TextView)findViewById(R.id.wifistatus);
 
-        if (wifiManager.isWifiEnabled()){
-//            wifiSwitch.setChecked(true);
-            wifiStatus.setText("Wifi ON");
-        } else {
-//            wifiSwitch.setChecked(false);
-            wifiStatus.setText("Wifi OFF");
-        }
+//        if (wifiManager.isWifiEnabled()){
+////            wifiSwitch.setChecked(true);
+//            wifiStatus.setText("Wifi ON");
+//        } else {
+////            wifiSwitch.setChecked(false);
+//            wifiStatus.setText("Wifi OFF");
+//        }
 //        wifiSwitch = (Switch)findViewById(R.id.wifiswitch);
 
 //        if (wifiManager.isWifiEnabled()){
@@ -344,6 +344,8 @@ public class MainActivity extends AppCompatActivity implements
        }
         mGoogleMap.setMyLocationEnabled(true);
 
+        mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+
 //        mGoogleApiClient = new GoogleApiClient.Builder(this)
 //                .addApi(LocationServices.API)
 //                .addConnectionCallbacks(this)
@@ -355,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void goToLocationZoom(double lat, double lng, float zoom) {
         LatLng ll = new LatLng(lat, lng);
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 18);
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 16);
         mGoogleMap.moveCamera(update);
 
 
@@ -423,7 +425,7 @@ public class MainActivity extends AppCompatActivity implements
             Toast.makeText(this, "Cant get current location", Toast.LENGTH_LONG).show();
         } else {
             LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
-            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 19);
+            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 18);
             mGoogleMap.animateCamera(update);
         }
     }
