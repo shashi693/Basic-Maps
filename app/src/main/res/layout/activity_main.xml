@@ -50,9 +50,7 @@
             android:layout_weight="2"
             android:id="@+id/button"
             android:onClick="geoLocate"
-
-
-            />
+              />
 
 
         <!--<Switch-->
@@ -67,7 +65,7 @@
     <!-- view for AdMob Banner Ad -->
     <com.google.android.gms.ads.AdView
         android:id="@+id/adView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"

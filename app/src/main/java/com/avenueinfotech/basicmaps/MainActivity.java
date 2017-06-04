@@ -23,7 +23,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.avenueinfotech.basicmaps.utils.GPSTracker;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -172,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements
         cd = new ConnectionDetector(this);
 
         if (cd.isConnected()) {
-            Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Internet Connected", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(MainActivity.this, "Enable Internet for Search", Toast.LENGTH_LONG).show();
         }
@@ -359,7 +358,6 @@ public class MainActivity extends AppCompatActivity implements
         LatLng ll = new LatLng(lat, lng);
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 16);
         mGoogleMap.moveCamera(update);
-
 
     }
 
