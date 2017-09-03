@@ -22,45 +22,135 @@
         android:id="@+id/mapFragment"
          />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="42dp"
-        android:layout_weight=".70"
-        android:orientation="horizontal"
+        android:layout_height="39dp"
         >
 
-
-        <EditText
-            android:inputType="textMultiLine"
-            android:scrollbars="vertical"
-            android:textSize="16dp"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="18"
-            android:layout_gravity="center_horizontal"
-            android:id="@+id/editText"
-            android:text="Taj Mahal, Agra"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:layout_marginLeft="1dp"
+            android:layout_marginTop="2dp"
+            android:id="@+id/wifitext"
+            >
 
-            />
+            <ImageView
+                android:layout_marginTop="0dp"
+                app:srcCompat="@drawable/wifi27"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        <Button
-            android:text="Search"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:id="@+id/button"
-            android:onClick="geoLocate"
-              />
+            <TextView
+                android:text="Wifi On"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/wifistatus"
+                android:textColor="@color/colorwifi"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+
 
 
         <!--<Switch-->
         <!--android:layout_width="90dp"-->
         <!--android:layout_height="wrap_content"-->
         <!--android:id="@+id/wifiswitch"-->
-        <!--android:layout_weight="0.09" />-->
+        <!--android:layout_toRightOf="@+id/wifitext"-->
+        <!--/>-->
+
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/textView"-->
+        <!--android:layout_toRightOf="@+id/wifitext"-->
+        <!--/>-->
+
+        <EditText
+            android:scrollbars="vertical"
+            android:textSize="16dp"
+            android:layout_width="208dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/editText"
+            android:text="Rio de Janeiro, Brazil"
+            android:layout_alignBottom="@+id/wifitext"
+
+            android:layout_toRightOf="@+id/wifitext" />
+
+        <Button
+            android:text="Go"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/button"
+            android:onClick="geoLocate"
+
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/editText"
+            android:layout_toEndOf="@+id/editText" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/button"
+            android:layout_toEndOf="@+id/button"
+            >
+
+            <ImageView
+                android:id="@+id/iv_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/northpole"
+                android:scaleType="centerInside"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+            <ImageView
+                android:id="@+id/iv_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/arrowng"
+                android:scaleType="centerInside"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="0"-->
+            <!--android:textSize="20dp"-->
+            <!--android:id="@+id/tv_degrees"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_toRightOf="@+id/button"-->
+            <!--android:layout_toEndOf="@+id/button"-->
+            <!--/>-->
 
 
-    </LinearLayout>
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="10dp"
+            android:id="@+id/tv_degrees"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/button"
+            android:layout_toRightOf="@+id/button" />
+
+
+
+
+    </RelativeLayout>
 
     <!-- view for AdMob Banner Ad -->
     <com.google.android.gms.ads.AdView

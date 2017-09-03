@@ -5,6 +5,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -18,7 +22,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,7 +62,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
         OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMyLocationButtonClickListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener,
+        GoogleMap.OnMyLocationButtonClickListener, SensorEventListener {
 
     GoogleMap mGoogleMap;
     GoogleApiClient mApiClient;
@@ -68,8 +76,15 @@ public class MainActivity extends AppCompatActivity implements
     public final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
     String[] PERMISSIONS = {android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE};
 
+    private AutoCompleteAdapter mAdapter;
 
+    ImageView iv_arrow;
+    TextView tv_degrees;
 
+    private static SensorManager sensorService;
+    private Sensor sensor;
+
+    private float currentDegree = 0f;
 
     //    Button button;
     ConnectionDetector cd;
@@ -99,6 +114,12 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             Toast.makeText(this, "Google services Absent", Toast.LENGTH_LONG).show();
         }
+
+        iv_arrow = (ImageView)findViewById(R.id.iv_arrow);
+        tv_degrees = (TextView)findViewById(R.id.tv_degrees);
+
+        sensorService = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sensor = sensorService.getDefaultSensor(Sensor.TYPE_ORIENTATION);
 
         mApiClient = new GoogleApiClient.Builder(this)
                 .addApi(ActivityRecognition.API)
@@ -265,6 +286,61 @@ public class MainActivity extends AppCompatActivity implements
         return false;
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mApiClient != null)
+            mApiClient.connect();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(sensor != null){
+            sensorService.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
+
+        }else {
+            Toast.makeText(MainActivity.this, "Not supported", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorService.unregisterListener(this);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        int degree = Math.round(sensorEvent.values[0]);
+
+        tv_degrees.setText(Integer.toString(degree) + (char) 0x00B0);
+
+        RotateAnimation rs = new RotateAnimation(currentDegree, -degree,
+                Animation.RELATIVE_TO_SELF, 0.5f,Animation.RELATIVE_TO_SELF, 0.5f);
+
+        rs.setDuration(1000);
+        rs.setFillAfter(true);
+
+        iv_arrow.startAnimation(rs);
+        currentDegree = -degree;
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+    @Override
+    protected void onStop() {
+        if (mApiClient != null && mApiClient.isConnected()) {
+            mAdapter.setGoogleApiClient(null);
+            mApiClient.disconnect();
+        }
+        super.onStop();
+    }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -356,7 +432,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void goToLocationZoom(double lat, double lng, float zoom) {
         LatLng ll = new LatLng(lat, lng);
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 16);
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 19);
         mGoogleMap.moveCamera(update);
 
     }
@@ -397,7 +473,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onConnected(@Nullable Bundle bundle) {
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setInterval(360000);
+        mLocationRequest.setInterval(460000);
          {
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
@@ -423,7 +499,7 @@ public class MainActivity extends AppCompatActivity implements
             Toast.makeText(this, "Cant get current location", Toast.LENGTH_LONG).show();
         } else {
             LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
-            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 18);
+            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 19);
             mGoogleMap.animateCamera(update);
         }
     }
@@ -434,22 +510,32 @@ public class MainActivity extends AppCompatActivity implements
 
         EditText et = (EditText) findViewById(R.id.editText);
         String location = et.getText().toString();
+        List<Address> list = null;
 
-        Geocoder gc = new Geocoder(this);
-        List<Address> list = gc.getFromLocationName(location, 1);
-        Address address = list.get(0);
-        String locality = address.getLocality();
-//        String area = address.getLocality();
+        if( !location.equals("")) {
+            Geocoder gc = new Geocoder(this);
+            try {
+                list = gc.getFromLocationName(location, 1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            for (int i = 0; i < list.size(); i++) {
+                Address address = list.get(0);
+                String locality = address.getLocality();
+                String area = address.getSubLocality();
 
 
-        Toast.makeText(this, locality, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, locality, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, area, Toast.LENGTH_SHORT).show();
 
+                double lat = address.getLatitude();
+                double lng = address.getLongitude();
+                goToLocationZoom(lat, lng, 25);
 
-        double lat = address.getLatitude();
-        double lng = address.getLongitude();
-        goToLocationZoom(lat, lng, 25);
-
-        setMarker(locality, lat, lng);
+                setMarker(locality, lat, lng);
+            }
+        }
 
     }
 
@@ -461,7 +547,7 @@ public class MainActivity extends AppCompatActivity implements
         MarkerOptions options = new MarkerOptions()
                 .title(locality)
                 .draggable(true)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.search_icon))
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.iconw))
                 .position(new LatLng(lat, lng))
                 .snippet("I am here");
 
