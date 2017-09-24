@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="00dp"
+    tools:context="com.avenueinfotech.basicmaps.MainActivity">
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            ads:adSize="BANNER"
+            ads:adUnitId="@string/banner_ad_unit_id" />
+
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="3dp">
+
+            <LinearLayout
+                android:id="@+id/wifitext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="1dp"
+                android:layout_marginTop="2dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    app:srcCompat="@drawable/wifi27" />
+
+                <TextView
+                    android:id="@+id/wifistatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Wifi On"
+                    android:textColor="@color/colorwifi"
+                    android:textSize="10sp" />
+
+            </LinearLayout>
+
+
+            <!--<Switch-->
+            <!--android:layout_width="90dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/wifiswitch"-->
+            <!--android:layout_toRightOf="@+id/wifitext"-->
+            <!--/>-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/textView"-->
+            <!--android:layout_toRightOf="@+id/wifitext"-->
+            <!--/>-->
+
+            <EditText
+                android:id="@+id/editText"
+                android:layout_width="190dp"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/wifitext"
+                android:layout_gravity="center_horizontal"
+                android:layout_toRightOf="@+id/wifitext"
+                android:scrollbars="vertical"
+                android:text="@string/search"
+
+                android:textSize="16dp" />
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toEndOf="@+id/editText"
+
+                android:layout_toRightOf="@+id/editText"
+                android:onClick="geoLocate"
+                android:text="Go" />
+
+
+            <RelativeLayout
+                android:id="@+id/northpole"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                >
+
+                <ImageView
+                    android:id="@+id/iv_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/northpole" />
+
+                <ImageView
+                    android:id="@+id/iv_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/arrowng" />
+
+
+                <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="0"-->
+                <!--android:textSize="20dp"-->
+                <!--android:id="@+id/tv_degrees"-->
+                <!--android:layout_alignParentBottom="true"-->
+                <!--android:layout_toRightOf="@+id/button"-->
+                <!--android:layout_toEndOf="@+id/button"-->
+                <!--/>-->
+
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_degrees"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/northpole"
+                android:text="0"
+                android:textSize="10dp" />
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+    <!-- view for AdMob Banner Ad -->
+
+
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="19.30"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:id="@+id/mapFragment"
+        />
+
+
+
+</LinearLayout>

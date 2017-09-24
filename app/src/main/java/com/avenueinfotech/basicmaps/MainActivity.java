@@ -334,10 +334,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onStop() {
-        if (mApiClient != null && mApiClient.isConnected()) {
-            mAdapter.setGoogleApiClient(null);
-            mApiClient.disconnect();
-        }
+//        if (mApiClient != null && mApiClient.isConnected()) {
+//            mAdapter.setGoogleApiClient(null);
+//            mApiClient.disconnect();
+//        }
         super.onStop();
     }
 
@@ -432,7 +432,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void goToLocationZoom(double lat, double lng, float zoom) {
         LatLng ll = new LatLng(lat, lng);
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 19);
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 18);
         mGoogleMap.moveCamera(update);
 
     }
@@ -499,7 +499,7 @@ public class MainActivity extends AppCompatActivity implements
             Toast.makeText(this, "Cant get current location", Toast.LENGTH_LONG).show();
         } else {
             LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
-            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 19);
+            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 18);
             mGoogleMap.animateCamera(update);
         }
     }

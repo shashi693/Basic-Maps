@@ -77,7 +77,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:id="@+id/editText"
-            android:text="Rio de Janeiro, Brazil"
+            android:text="@string/search"
             android:layout_alignBottom="@+id/wifitext"
 
             android:layout_toRightOf="@+id/wifitext" />
