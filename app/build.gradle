@@ -7,8 +7,8 @@ android {
         applicationId "com.avenueinfotech.basicmaps"
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 16
-        versionName "2.4"
+        versionCode 17
+        versionName "2.5"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
